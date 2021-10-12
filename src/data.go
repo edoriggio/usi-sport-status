@@ -35,7 +35,7 @@ func checkIfExpired(body string) bool {
 	now := time.Now().Local()
 	parsed, _ := time.Parse("01-02-2006 15:04:05 MST", result.ValidTo)
 
-	if !now.Before(parsed) || !strings.Contains(strings.ToLower(body), "force status") {
+	if !now.Before(parsed) || strings.Compare(body, "force status") == 0 {
 		var newResult Result
 
 		expTime := time.Now().Local().Add(time.Hour * time.Duration(2)).Format("01-02-2006 15:04:05 MST")
