@@ -17,6 +17,7 @@ package main
 import (
 	"os"
 	"time"
+	"strings"
 	"encoding/json"
 )
 
@@ -25,7 +26,7 @@ type Result struct {
 	Available bool   `json:"available"`
 }
 
-func checkIfExpired() bool {
+func checkIfExpired(body string) bool {
 	var result Result
 
 	jsonFile, _ := os.ReadFile("../data/result.json")
@@ -34,7 +35,7 @@ func checkIfExpired() bool {
 	now := time.Now().Local()
 	parsed, _ := time.Parse("01-02-2006 15:04:05 MST", result.ValidTo)
 
-	if !now.Before(parsed) {
+	if !now.Before(parsed) || !strings.Contains(strings.ToLower(body), "force status") {
 		var newResult Result
 
 		expTime := time.Now().Local().Add(time.Hour * time.Duration(2)).Format("01-02-2006 15:04:05 MST")

@@ -40,15 +40,17 @@ type sendMessageReqBody struct {
 	Text   string `json:"text"`
 }
 
-func Handler(res http.ResponseWriter, req *http.Request) {
-	body := &webhookReqBody{}
+var body = &webhookReqBody{}
 
+func Handler(res http.ResponseWriter, req *http.Request) {
 	if err := json.NewDecoder(req.Body).Decode(body); err != nil {
 		fmt.Println("could not decode request body", err)
 		return
 	}
 
-	if !strings.Contains(strings.ToLower(body.Message.Text), "status") {
+	if !strings.Contains(strings.ToLower(body.Message.Text), "status") ||
+		 !strings.Contains(strings.ToLower(body.Message.Text), "force status") {
+
 		return
 	}
 
@@ -61,7 +63,7 @@ func Handler(res http.ResponseWriter, req *http.Request) {
 }
 
 func sendMessage(chatID int64) error {
-	isAvailable := checkIfExpired()
+	isAvailable := checkIfExpired(body.Message.Text)
 
 	message := "SPOTS AVAILABLE!!!"
 
